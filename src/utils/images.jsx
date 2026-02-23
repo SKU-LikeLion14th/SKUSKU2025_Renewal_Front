@@ -47,6 +47,15 @@ const images = {
   박준범: `${PATH}assets/images/Team/박준범.png`,
   권오현: `${PATH}assets/images/Team/권오현.png`,
   노주희: `${PATH}assets/images/Team/노주희.png`,
+
+  조승민: `${PATH}assets/images/Team/조승민.png`,
+  홍민경: `${PATH}assets/images/Team/홍민경.png`,
+  노태경: `${PATH}assets/images/Team/노태경.png`,
+  김지유: `${PATH}assets/images/Team/김지유.png`,
+  김민규: `${PATH}assets/images/Team/김민규.png`,
+  김소은: `${PATH}assets/images/Team/김소은.png`,
+  윤준하: `${PATH}assets/images/Team/윤준하.png`,
+  조준형: `${PATH}assets/images/Team/조준형.png`,
 };
 
 export default images;

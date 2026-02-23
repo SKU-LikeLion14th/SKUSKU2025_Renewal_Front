@@ -17,7 +17,7 @@ export default function Project() {
     const tab = searchParams.get("tab");
     if (!tab) {
       setActiveTab("all");
-    } else if (["13", "12", "11"].includes(tab)) {
+    } else if (["14", "13", "12", "11"].includes(tab)) {
       setActiveTab(tab);
     }
   }, [searchParams]);
@@ -60,6 +60,9 @@ export default function Project() {
         const classList = [...new Set(data.map((p) => p.classTh))]
           .sort()
           .reverse();
+        if (!classList.includes("14")) {
+          classList.unshift("14");
+        }
         setTabs(classList);
       } catch (error) {
         console.error("프로젝트 가져오기 실패:", error);
@@ -96,36 +99,47 @@ export default function Project() {
         />
 
         {/* 프로젝트 리스트 */}
-        <div className="grid w-full grid-cols-2 gap-5 mx-auto mt-8 text-white md:gap-8 sm:grid-cols-3 sm:w-full xl:gap-12 lg:grid-cols-4">
-          {filteredProjects.map((project) => (
-            <div
-              key={project.id}
-              className="mx-auto cursor-pointer w-full hover:shadow-xl duration-500 hover:-translate-y-1 group"
-              onClick={() => openProject(project.projectUrl)}>
-              <div className="relative">
-                <img
-                  src={project.imageUrl}
-                  alt={project.title}
-                  className="w-full aspect-[17/10] rounded-md shadow-lg group-hover:opacity-30 transition-opacity duration-500 object-cover"
-                />
+        {filteredProjects.length > 0 ? (
+          <div className="grid w-full grid-cols-2 gap-5 mx-auto mt-8 text-white md:gap-8 sm:grid-cols-3 sm:w-full xl:gap-12 lg:grid-cols-4">
+            {filteredProjects.map((project) => (
+              <div
+                key={project.id}
+                className="mx-auto cursor-pointer w-full hover:shadow-xl duration-500 hover:-translate-y-1 group"
+                onClick={() => openProject(project.projectUrl)}>
+                <div className="relative">
+                  <img
+                    src={project.imageUrl}
+                    alt={project.title}
+                    className="w-full aspect-[17/10] rounded-md shadow-lg group-hover:opacity-30 transition-opacity duration-500 object-cover"
+                  />
 
-                <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-500 opacity-0 group-hover:opacity-100">
-                  <span className="px-3 py-1.5 text-sm text-white bg-blue-500 rounded-md font-bold sm:px-3 sm:py-2 sm:text-sm md:px-4 md:py-2 md:text-base lg:text-base xl:px-5 xl:py-2 xl:text-lg">
-                    사이트 보러가기
-                  </span>
+                  <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-500 opacity-0 group-hover:opacity-100">
+                    <span className="px-3 py-1.5 text-sm text-white bg-blue-500 rounded-md font-bold sm:px-3 sm:py-2 sm:text-sm md:px-4 md:py-2 md:text-base lg:text-base xl:px-5 xl:py-2 xl:text-lg">
+                      사이트 보러가기
+                    </span>
+                  </div>
+                </div>
+                <div className="p-2">
+                  <div className="my-1 text-sm xl:my-2 font-bold min-[500px]:text-lg lg:text-xl xl:text-[23px]">
+                    {project.title}
+                  </div>
+                  <div className="text-[#A2A2A2] text-xs sm:text-sm xl:text-lg">
+                    {project.subTitle}
+                  </div>
                 </div>
               </div>
-              <div className="p-2">
-                <div className="my-1 text-sm xl:my-2 font-bold min-[500px]:text-lg lg:text-xl xl:text-[23px]">
-                  {project.title}
-                </div>
-                <div className="text-[#A2A2A2] text-xs sm:text-sm xl:text-lg">
-                  {project.subTitle}
-                </div>
-              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center w-full mt-24 mb-32">
+            <div className="text-[20px] sm:text-[24px] text-[#A2A2A2] fontBold mb-4 text-center break-keep">
+              아직 등록된 프로젝트가 없습니다.
             </div>
-          ))}
-        </div>
+            <div className="text-[16px] sm:text-[18px] text-[#666666] fontRegular text-center break-keep">
+              14기 운영진, 아기사자들의 멋진 아이디어가 곧 현실이 될 예정입니다. 기대해 주세요!
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

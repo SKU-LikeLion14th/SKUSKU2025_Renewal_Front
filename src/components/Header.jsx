@@ -14,6 +14,13 @@ export default function Header() {
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const tooltipRef = useRef(null);
 
+  const handleLogoClick = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   useEffect(() => {
     function handleClickOutside(event) {
       if (tooltipRef.current && !tooltipRef.current.contains(event.target)) {
@@ -36,22 +43,24 @@ export default function Header() {
     {
       title: { label: "PROJECT", path: "/project" },
       subItems: [
+        { label: "14기", path: "/project?tab=14" },
         { label: "13기", path: "/project?tab=13" },
         { label: "12기", path: "/project?tab=12" },
         { label: "11기", path: "/project?tab=11" },
       ],
     },
     {
-      title: { label: "TEAM", path: "/team?tab=13" },
+      title: { label: "TEAM", path: "/team?tab=14" },
       subItems: [
+        { label: "14기", path: "/team?tab=14" },
         { label: "13기", path: "/team?tab=13" },
         { label: "12기", path: "/team?tab=12" },
         { label: "11기", path: "/team?tab=11" },
       ],
     },
     {
-      title: { label: "COMMUNITY", isAlert: true },
-      subItems: [{ label: "모집공고", isAlert: true }],
+      title: { label: "COMMUNITY", path: "/community/recruit2" },
+      subItems: [{ label: "모집공고", path: "/community/recruit2" }],
     },
   ];
 
@@ -74,22 +83,20 @@ export default function Header() {
 
   return (
     <div
-      className={`fixed z-10 top-0 w-full transition-all duration-300 ${
-        isHovered ? "bg-white min-h-[280px]" : "backdrop-blur-2xl"
-      }`}
+      className={`fixed z-10 top-0 w-full transition-all duration-300 ${isHovered ? "bg-white min-h-[280px]" : "backdrop-blur-2xl"
+        }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="flex py-5 px-12 items-center justify-between mx-auto relative z-10 shadow-[0px_0.5px_0px_0px_rgba(217,217,217,1)]">
         {/* 왼쪽 로고 + 메뉴 */}
         <div className="flex space-x-12">
-          <Link to={"/"}>
+          <Link to={"/"} onClick={handleLogoClick}>
             <div className="flex items-center space-x-4">
               <img src="/likelionLogo.png" alt="Logo" className="w-9" />
               <p
-                className={`text-[21px] fontBlack ${
-                  isHovered ? "text-[#000]" : "text-[#3B79FF]"
-                }`}
+                className={`text-[21px] fontBlack ${isHovered ? "text-[#000]" : "text-[#3B79FF]"
+                  }`}
               >
                 LIKELION SKU
               </p>
@@ -103,11 +110,9 @@ export default function Header() {
               return (
                 <div
                   key={index}
-                  className={`fontMedium text-[16px] ${
-                    isHovered ? "text-[#000]" : "text-white"
-                  } cursor-pointer relative ${
-                    active ? "fontBold" : "fontRegular"
-                  }`}
+                  className={`fontMedium text-[16px] ${isHovered ? "text-[#000]" : "text-white"
+                    } cursor-pointer relative ${active ? "fontBold" : "fontRegular"
+                    }`}
                 >
                   {/* 타이틀이 alert일 경우 */}
                   {item.title.isAlert ? (
@@ -121,7 +126,7 @@ export default function Header() {
                   )}
 
                   {isHovered && (
-                    <div className="absolute w-full space-y-8 mt-12">
+                    <div className="absolute w-full space-y-6 mt-10">
                       {item.subItems.map((subItem, subIdx) => {
                         const subActive = isActive(subItem.path);
 
@@ -129,9 +134,8 @@ export default function Header() {
                           <div
                             key={subIdx}
                             onClick={handleAlertClick}
-                            className={`block text-[16px] text-[#121212] text-center cursor-pointer ${
-                              subActive ? "fontBold" : "fontRegular"
-                            }`}
+                            className={`block text-[16px] text-[#121212] text-center cursor-pointer ${subActive ? "fontBold" : "fontRegular"
+                              }`}
                           >
                             {subItem.label}
                           </div>
@@ -139,9 +143,8 @@ export default function Header() {
                           <Link
                             key={subIdx}
                             to={subItem.path}
-                            className={`block text-[16px] text-[#121212] text-center ${
-                              subActive ? "fontBold" : "fontRegular"
-                            }`}
+                            className={`block text-[16px] text-[#121212] text-center ${subActive ? "fontBold" : "fontRegular"
+                              }`}
                           >
                             {subItem.label}
                           </Link>
@@ -159,10 +162,10 @@ export default function Header() {
         <div className="flex space-x-4 items-center ">
           {/* Hover 시에만 보임 */}
           <div
-            className={`transition-opacity duration-300 space-x-4 hidden xl:flex ${
-              isHovered ? "flex opacity-100" : "hidden opacity-0"
-            }`}
+            className={`transition-opacity duration-300 space-x-4 hidden xl:flex ${isHovered ? "flex opacity-100" : "hidden opacity-0"
+              }`}
           >
+            {/* 툴팁 및 제작자 버튼 주석 처리
             <div className="relative" ref={tooltipRef}>
               <button
                 className="text-[13px] px-6 py-1 flex items-center rounded-3xl text-[#fff] bg-[#212121]"
@@ -173,11 +176,12 @@ export default function Header() {
 
               {isTooltipVisible && (
                 <div className="absolute top-[140%] left-1/2 -translate-x-1/2 bg-white border border-gray-500 rounded-lg shadow-md px-4 py-2 text-sm text-black whitespace-nowrap z-20">
-                  12, 13기 운영진이 제작했습니다!
+                  12, 13, 14기 운영진이 제작했습니다!
                   <div className="absolute top-[-8px] left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-l border-t border-gray-500 rotate-45"></div>
                 </div>
               )}
             </div>
+            */}
             <a
               href="https://www.instagram.com/likelion_sku"
               className="flex items-center"
@@ -190,7 +194,7 @@ export default function Header() {
                 alt="인스타"
               />
             </a>
-            <a href="#" className="flex items-center mr-6">
+            <a href="http://pf.kakao.com/_vxixlaxj" target="_blank" rel="noopener noreferrer" className="flex items-center mr-6">
               <img src="/assets/images/chat.png" className="w-7" alt="채팅" />
             </a>
           </div>
@@ -199,9 +203,8 @@ export default function Header() {
 
           {user ? (
             <div
-              className={`flex items-center justify-center ${
-                isHovered ? "text-black" : "text-white"
-              }`}
+              className={`flex items-center justify-center ${isHovered ? "text-black" : "text-white"
+                }`}
             >
               <div className="flex items-center">
                 <div

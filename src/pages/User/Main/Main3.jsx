@@ -146,7 +146,7 @@ export default function Main3() {
     },
   ];
 
-  const beforeText = "멋쟁이사자처럼 13기에서 진행되는 ";
+  const beforeText = "멋쟁이사자처럼 14기에서 진행되는 ";
   const highlightText = "프로그램";
   const afterText = "을 소개합니다.";
   const fullText = beforeText + highlightText + afterText;
@@ -170,7 +170,7 @@ export default function Main3() {
 
       <div className="px-4 sm:px-8 md:px-16 lg:px-14 xl:px-18 bg-[#1B1B1B] sm:py-20 py-12 sm:pb-40 pb-10 space-y-20">
         <p className="text-[#9ABFFF] fontSB text-center text-[9px] sm:text-[14px] md:text-[18px]">
-          @2025 PROGRAM info
+          @2026 PROGRAM info
         </p>
 
         <div className="max-w-5xl mx-auto sm:flex sm:flex-col max-sm:grid max-sm:grid-cols-2 sm:gap-25">

@@ -9,7 +9,7 @@ export default function HeaderMobile() {
   const menuItems = [
     { title: "PROJECT", path: "/project" },
     { title: "TEAM", path: "/team" },
-    { title: "COMMUNITY", path: "/", isAlert: true },
+    { title: "COMMUNITY", path: "/community/recruit2" },
     { title: "CYBERCAMPUS", path: "/cybercampus" },
   ];
 
@@ -19,9 +19,8 @@ export default function HeaderMobile() {
 
   return (
     <div
-      className={`fixed z-100 top-0 w-full transition-all duration-300 ${
-        isMenuOpen ? "bg-white" : "backdrop-blur-2xl"
-      }`}
+      className={`fixed z-100 top-0 w-full transition-all duration-300 ${isMenuOpen ? "bg-white" : "backdrop-blur-2xl"
+        }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => {
         if (!isMenuOpen) setIsHovered(false);
@@ -34,9 +33,8 @@ export default function HeaderMobile() {
             <div className="flex items-center space-x-2">
               <img src="/likelionLogo.png" alt="Logo" className="w-7 md:w-10" />
               <p
-                className={`text-md fontBlack md:text-xl ${
-                  isMenuOpen ? "text-[#000]" : "text-[#3B79FF]"
-                }`}
+                className={`text-md fontBlack md:text-xl ${isMenuOpen ? "text-[#000]" : "text-[#3B79FF]"
+                  }`}
               >
                 LIKELION SKU
               </p>
@@ -64,9 +62,8 @@ export default function HeaderMobile() {
           <div className="flex flex-col space-y-4 mt-4 transition-all duration-300 sm:ml-5">
             {menuItems.map((item, index) => {
               const isLast = index === menuItems.length - 1;
-              const itemClass = `text-black text-base fontMedium cursor-pointer px-4 ${
-                isLast ? "mb-3" : ""
-              }`;
+              const itemClass = `text-black text-base fontMedium cursor-pointer px-4 ${isLast ? "mb-3" : ""
+                }`;
 
               return (
                 <div key={index}>

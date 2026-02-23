@@ -3,6 +3,8 @@ import { Route, Routes } from "react-router-dom";
 import Main from "../pages/User/Main/Main";
 import Project from "../pages/User/Project/Project";
 import TeamPage from "../pages/User/Team/TeamPage";
+import Recruitment from "../pages/User/Community/Recruitment";
+import Recruit2 from "../pages/User/Community/Recruit2";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import HeaderMobile from "../components/HeaderMobile";
@@ -24,6 +26,8 @@ const User = () => {
         <Route path="/" element={<Main />} />
         <Route path="/project/*" element={<Project />} />
         <Route path="/team/*" element={<TeamPage />} />
+        <Route path="/community/recruit" element={<Recruitment />} />
+        <Route path="/community/recruit2" element={<Recruit2 />} />
       </Routes>
 
       {!isMobile && <Footer />}

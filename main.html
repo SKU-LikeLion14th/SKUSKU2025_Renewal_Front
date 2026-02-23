@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>웹 인터랙션 백과사전 (최종판)</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- GSAP & Plugins -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Lenis (Smooth Scroll) -->
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;600;800;900&display=swap');
+
+        /* --- FINAL 1: Custom Scrollbar --- */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f260;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #050505;
+            color: #ffffff;
+            overflow-x: hidden;
+            cursor: none;
+            /* Custom Cursor */
+            word-break: keep-all;
+            /* 한글 줄바꿈 최적화 */
+        }
+
+        /* --- Global: Grain Noise Overlay --- */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9990;
+            opacity: 0.05;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+        }
+
+        /* --- Global: Magnetic Cursor --- */
+        .custom-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            border: 1px solid white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, background-color 0.3s;
+            mix-blend-mode: difference;
+        }
+
+        .custom-cursor.active {
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            opacity: 0.5;
+            border: none;
+        }
+
+        /* --- FINAL 2: Cinematic Preloader --- */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .loader-text {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .loader-bar-bg {
+            width: 200px;
+            height: 2px;
+            background: #333;
+            position: relative;
+        }
+
+        .loader-bar {
+            width: 0%;
+            height: 100%;
+            background: #00f260;
+        }
+
+        /* --- FINAL 3: Floating Dock Navigation --- */
+        .nav-dock {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 9995;
+            transition: transform 0.3s;
+            max-width: 90vw;
+            overflow-x: auto;
+            /* Handle many items */
+        }
+
+        .nav-item {
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .nav-item:hover {
+            transform: scale(1.5);
+            background: white;
+        }
+
+        .nav-item.active {
+            background: #00f260;
+            transform: scale(1.2);
+        }
+
+        .nav-item::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: black;
+            color: white;
+            padding: 6px 10px;
+            font-size: 12px;
+            border-radius: 4px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s;
+            font-family: 'Pretendard', sans-serif;
+        }
+
+        .nav-item:hover::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+
+        /* --- UI Elements --- */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00f260, #0575e6);
+            width: 0%;
+            z-index: 9999;
+        }
+
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 4rem 2rem;
+            background-color: #050505;
+            z-index: 1;
+        }
+
+        h2 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        p.desc {
+            font-size: 1.2rem;
+            color: #a0a0a0;
+            max-width: 600px;
+            text-align: center;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 0.9rem;
+            color: #00f260;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        /* --- Existing Effects --- */
+        .mask-section {
+            height: 100vh;
+            width: 100%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .mask-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://picsum.photos/id/15/1920/1080');
+            background-size: cover;
+            background-position: center;
+            clip-path: circle(0% at 50% 50%);
+        }
+
+        .mask-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            pointer-events: none;
+            mix-blend-mode: difference;
+        }
+
+        .theme-section {
+            background-color: #050505;
+            color: #fff;
+            transition: color 0.3s ease;
+        }
+
+        .rolling-text-section {
+            perspective: 1500px;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .rolling-wrap {
+            transform-style: preserve-3d;
+            padding: 50px 0;
+        }
+
+        .rolling-line {
+            font-size: 5rem;
+            font-weight: 900;
+            text-align: center;
+            transform-origin: 50% 50% -50px;
+            opacity: 0;
+            will-change: transform, opacity;
+            line-height: 1.2;
+            backface-visibility: hidden;
+        }
+
+        .svg-draw-section {
+            height: 150vh;
+            position: relative;
+            background-color: #050505;
+            overflow: hidden;
+        }
+
+        svg#path-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        path#draw-path {
+            fill: none;
+            stroke: #00f260;
+            stroke-width: 6;
+            stroke-linecap: round;
+        }
+
+        .explode-section {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background-color: #000000;
+            overflow: hidden;
+            z-index: 5;
+        }
+
+        .explode-item {
+            position: absolute;
+            width: 250px;
+            height: 350px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.5);
+            opacity: 0;
+        }
+
+        .explode-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .skew-gallery {
+            padding: 10vh 0;
+            overflow: hidden;
+            background-color: #050505;
+        }
+
+        .skew-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .skew-item {
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+            border-radius: 1rem;
+            position: relative;
+        }
+
+        .skew-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            will-change: transform;
+        }
+
+        .holo-section {
+            perspective: 1000px;
+            background-color: #0a0a0a;
+        }
+
+        .holo-card {
+            width: 320px;
+            height: 480px;
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border-radius: 20px;
+            position: relative;
+            transform-style: preserve-3d;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .holo-content {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transform: translateZ(50px);
+            pointer-events: none;
+        }
+
+        .holo-glare {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.3), transparent 60%);
+            opacity: 0;
+            mix-blend-mode: overlay;
+            pointer-events: none;
+            border-radius: 20px;
+            transform: translateZ(1px);
+        }
+
+        .holo-border {
+            position: absolute;
+            inset: 0;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            pointer-events: none;
+        }
+
+        .pin-zoom-wrapper {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .pin-zoom-img {
+            width: 40vw;
+            height: 40vh;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+
+        .text-reveal-container h2 {
+            background: linear-gradient(to right, #ffffff 50%, #333 50%);
+            background-size: 200% 100%;
+            background-position: 100% 0;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .particle-section {
+            background-color: #000;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+
+        canvas#particle-canvas {
+            width: 100%;
+            height: 400px;
+            display: block;
+        }
+
+        .constellation-section {
+            background: #000;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+
+        canvas#network-canvas {
+            display: block;
+        }
+
+        .gravity-section {
+            background: #111;
+            overflow: hidden;
+            position: relative;
+            border-top: 1px solid #333;
+        }
+
+        canvas#gravity-canvas {
+            display: block;
+        }
+
+        .gravity-ui {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            pointer-events: none;
+            text-align: center;
+        }
+
+        .flow-section {
+            background: #000;
+            position: relative;
+            overflow: hidden;
+            cursor: none;
+        }
+
+        canvas#flow-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .flow-ui {
+            position: absolute;
+            z-index: 10;
+            pointer-events: none;
+            mix-blend-mode: difference;
+            text-align: center;
+        }
+
+        .split-text-section {
+            background-color: #000;
+            overflow: hidden;
+        }
+
+        .split-line {
+            overflow: hidden;
+            display: block;
+        }
+
+        .split-word {
+            display: inline-block;
+            transform: translateY(100%);
+            will-change: transform;
+        }
+
+        .accordion-section {
+            background: #111;
+        }
+
+        .accordion-container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            height: 500px;
+            gap: 10px;
+        }
+
+        .acc-item {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            border-radius: 20px;
+            transition: flex 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            cursor: pointer;
+        }
+
+        .acc-item:hover {
+            flex: 3;
+        }
+
+        .acc-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.6);
+            transition: filter 0.5s;
+        }
+
+        .acc-item:hover img {
+            filter: brightness(1);
+        }
+
+        .acc-text {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            color: white;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s 0.1s;
+            white-space: nowrap;
+        }
+
+        .acc-item:hover .acc-text {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hover-reveal-section {
+            background: #050505;
+        }
+
+        .hover-list {
+            width: 100%;
+            max-width: 800px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hover-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2rem 0;
+            cursor: pointer;
+            position: relative;
+            transition: padding-left 0.3s;
+        }
+
+        .hover-item:hover {
+            padding-left: 20px;
+            color: #00f260;
+        }
+
+        .hover-item h3 {
+            font-size: 3rem;
+            font-weight: 300;
+            margin: 0;
+        }
+
+        .reveal-img-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 300px;
+            height: 400px;
+            pointer-events: none;
+            z-index: 1;
+            visibility: hidden;
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.8);
+            transition: opacity 0.3s, transform 0.3s;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        .reveal-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* --- NEW 17: Interactive Water Ripple --- */
+        .ripple-section {
+            background-color: #000;
+            cursor: none;
+            overflow: hidden;
+        }
+
+        canvas#ripple-canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --- NEW 18: RGB Kinetic Typography --- */
+        .rgb-section {
+            background-color: #000;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .rgb-text {
+            font-size: 8rem;
+            font-weight: 900;
+            line-height: 1;
+            text-align: center;
+            color: white;
+            position: relative;
+            mix-blend-mode: screen;
+        }
+
+        .rgb-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            mix-blend-mode: screen;
+            opacity: 0.8;
+        }
+
+        .rgb-r {
+            color: #ff0000;
+            transform: translateX(-2px);
+        }
+
+        .rgb-g {
+            color: #00ff00;
+            transform: translateX(0);
+        }
+
+        .rgb-b {
+            color: #0000ff;
+            transform: translateX(2px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Preloader -->
+    <div class="preloader">
+        <div class="loader-text">인터랙션 백과사전 로딩중...</div>
+        <div class="loader-bar-bg">
+            <div class="loader-bar"></div>
+        </div>
+    </div>
+
+    <!-- Global Elements -->
+    <div class="progress-bar"></div>
+    <div class="noise-overlay"></div>
+    <div class="custom-cursor"></div>
+
+    <!-- Nav Dock (Korean Tooltips) -->
+    <div class="nav-dock">
+        <div class="nav-item" data-tooltip="홈 (Intro)" onclick="scrollToSection(0)"></div>
+        <div class="nav-item" data-tooltip="마스크 리빌" onclick="scrollToSection(1)"></div>
+        <div class="nav-item" data-tooltip="테마 반전" onclick="scrollToSection(2)"></div>
+        <div class="nav-item" data-tooltip="3D 롤링 텍스트" onclick="scrollToSection(3)"></div>
+        <div class="nav-item" data-tooltip="패스 드로잉" onclick="scrollToSection(4)"></div>
+        <div class="nav-item" data-tooltip="익스플로드 갤러리" onclick="scrollToSection(5)"></div>
+        <div class="nav-item" data-tooltip="벨로시티 스큐" onclick="scrollToSection(6)"></div>
+        <div class="nav-item" data-tooltip="홀로그램 카드" onclick="scrollToSection(7)"></div>
+        <div class="nav-item" data-tooltip="핀 & 스케일" onclick="scrollToSection(8)"></div>
+        <div class="nav-item" data-tooltip="텍스트 리빌" onclick="scrollToSection(9)"></div>
+        <div class="nav-item" data-tooltip="파티클 텍스트" onclick="scrollToSection(10)"></div>
+        <div class="nav-item" data-tooltip="별자리 네트워크" onclick="scrollToSection(11)"></div>
+        <div class="nav-item" data-tooltip="중력 물리엔진" onclick="scrollToSection(12)"></div>
+        <div class="nav-item" data-tooltip="플로우 필드" onclick="scrollToSection(13)"></div>
+        <div class="nav-item" data-tooltip="랜딩: 히어로" onclick="scrollToSection(14)"></div>
+        <div class="nav-item" data-tooltip="랜딩: 주요기능" onclick="scrollToSection(15)"></div>
+        <div class="nav-item" data-tooltip="랜딩: 포트폴리오" onclick="scrollToSection(16)"></div>
+        <div class="nav-item" data-tooltip="수면 파동" onclick="scrollToSection(17)"></div>
+        <div class="nav-item" data-tooltip="RGB 키네틱" onclick="scrollToSection(18)"></div>
+    </div>
+
+    <!-- 0. Intro -->
+    <section class="h-screen bg-neutral-900 section-target" data-cursor="active">
+        <span class="badge">시작하기</span>
+        <h1 class="text-5xl md:text-7xl font-bold text-center mb-6">
+            웹 인터랙션<br>백과사전
+        </h1>
+        <p class="desc">
+            기초적인 스크롤 효과부터 최상급 물리 엔진까지,<br>
+            웹에서 구현 가능한 18가지 핵심 기술을 한눈에 확인하세요.
+        </p>
+        <div class="animate-bounce mt-10 text-gray-500">↓ 아래로 스크롤하세요</div>
+    </section>
+
+    <!-- 1. Mask Reveal -->
+    <div class="mask-section section-target">
+        <div class="mask-content">
+            <span class="badge text-white border-white">오프닝 효과</span>
+            <h2 class="text-white">마스크 리빌</h2>
+            <p class="text-white text-xl">작은 원에서 시작해 화면 전체로 확장되며<br>콘텐츠를 극적으로 등장시킵니다.</p>
+        </div>
+        <div class="mask-bg"></div>
+    </div>
+
+    <!-- 2. Theme Transition -->
+    <section class="theme-section section-target">
+        <span class="badge" style="border-color: currentColor; background: transparent;">분위기 전환</span>
+        <h2 style="color: inherit;">테마 반전 효과</h2>
+        <p class="desc" style="color: inherit; opacity: 0.8;">
+            특정 섹션 진입 시 배경색을 부드럽게 반전시켜<br>사용자의 주의를 환기시킵니다.
+        </p>
+        <div class="flex gap-4 mt-8">
+            <div class="w-16 h-16 bg-black rounded-full shadow-lg"></div>
+            <div class="w-16 h-16 bg-gray-700 rounded-full shadow-lg"></div>
+        </div>
+    </section>
+
+    <!-- 3. 3D Rolling Text -->
+    <section class="rolling-text-section section-target">
+        <span class="badge">타이포그래피</span>
+        <div class="rolling-wrap">
+            <div class="rolling-line text-gray-500">CINEMATIC</div>
+            <div class="rolling-line text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+                SCROLLING</div>
+            <div class="rolling-line text-white">EXPERIENCE</div>
+        </div>
+        <p class="desc mt-10">
+            스크롤 방향에 맞춰 글자가 입체적으로 회전합니다.<br>영화 엔딩 크레딧 같은 웅장함을 연출합니다.
+        </p>
+    </section>
+
+    <!-- 4. SVG Path Drawing -->
+    <div class="svg-draw-section flex flex-col items-center justify-start pt-20 section-target">
+        <div class="relative z-20 text-center">
+            <span class="badge">시선 유도</span>
+            <h2>패스 드로잉</h2>
+            <p class="desc">스크롤 진행률에 따라 선이 그려지며<br>사용자의 시선을 자연스럽게 다음 콘텐츠로 이끕니다.</p>
+        </div>
+        <svg id="path-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path id="draw-path" d="M50,0 C50,25 20,35 20,50 C20,65 80,75 80,100" />
+        </svg>
+    </div>
+
+    <!-- 5. Explode Gallery -->
+    <div class="explode-section section-target">
+        <div class="relative z-20 text-center pointer-events-none mix-blend-difference">
+            <span class="badge text-white mix-blend-difference border-white">동적 효과</span>
+            <h2 class="text-white mix-blend-difference">익스플로드 갤러리</h2>
+            <p class="text-white mt-4 font-light text-xl">중앙에 뭉쳐있던 이미지들이<br>스크롤과 함께 사방으로 흩어집니다.</p>
+        </div>
+        <div class="explode-item"><img src="https://picsum.photos/id/10/400/600"></div>
+        <div class="explode-item"><img src="https://picsum.photos/id/20/400/600"></div>
+        <div class="explode-item"><img src="https://picsum.photos/id/30/400/600"></div>
+        <div class="explode-item"><img src="https://picsum.photos/id/40/400/600"></div>
+        <div class="explode-item"><img src="https://picsum.photos/id/50/400/600"></div>
+    </div>
+
+    <!-- 6. Velocity Skew -->
+    <section class="skew-gallery section-target">
+        <span class="badge">물리 효과</span>
+        <h2>벨로시티 스큐</h2>
+        <p class="desc">
+            스크롤을 <strong>빠르게 튕겨보세요.</strong><br>
+            속도(관성)에 반응하여 이미지가 젤리처럼 늘어나는 효과입니다.
+        </p>
+        <div class="skew-grid">
+            <div class="skew-item"><img src="https://picsum.photos/id/60/800/800"></div>
+            <div class="skew-item"><img src="https://picsum.photos/id/70/800/800"></div>
+        </div>
+    </section>
+
+    <!-- 7. Holo-Card -->
+    <section class="holo-section section-target">
+        <span class="badge mb-10">3D 인터랙션</span>
+        <h2 class="mb-4">홀로그램 카드</h2>
+        <div class="holo-card">
+            <div class="holo-glare"></div>
+            <div class="holo-border"></div>
+            <div class="holo-content">
+                <h3 class="text-3xl font-bold">Interactive</h3>
+                <p class="text-gray-400 mt-2 text-sm">마우스를 올려보세요</p>
+            </div>
+        </div>
+        <p class="desc mt-10">마우스 위치에 따라 카드가 3D로 기울어지며<br>빛 반사(Glare) 효과가 실시간으로 적용됩니다.</p>
+    </section>
+
+    <!-- 8. Pin & Zoom -->
+    <div class="pin-zoom-section bg-black section-target">
+        <div class="pin-zoom-wrapper">
+            <img src="https://picsum.photos/id/100/1920/1080" class="pin-zoom-img">
+            <div class="absolute z-10 text-center mix-blend-difference pointer-events-none">
+                <span class="badge text-white border-white">몰입감</span>
+                <h2 class="text-white">핀 & 스케일</h2>
+                <p class="text-white mt-4 text-xl">화면을 고정(Pin)한 상태에서 이미지를 확대하여<br>제품 디테일이나 분위기를 강조합니다.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. Text Reveal -->
+    <section class="text-reveal-container bg-neutral-900 section-target">
+        <span class="badge">타이포그래피</span>
+        <h2 class="reveal-text text-5xl md:text-7xl w-full max-w-4xl leading-tight text-center">
+            Reading Progress<br>Text Reveal
+        </h2>
+        <p class="desc mt-8">사용자가 글을 읽는 속도(스크롤)에 맞춰<br>텍스트의 색상이 서서히 차오릅니다.</p>
+    </section>
+
+    <!-- 10. Particle Text -->
+    <section class="particle-section section-target">
+        <span class="badge mb-10">고급 기술</span>
+        <h2 class="mb-4 text-white">파티클 텍스트</h2>
+        <div class="relative w-full max-w-4xl">
+            <canvas id="particle-canvas"></canvas>
+        </div>
+        <p class="desc mt-8">
+            텍스트 위에 마우스를 올려보세요.<br>
+            글자가 수천 개의 입자로 흩어졌다가 다시 모입니다.
+        </p>
+    </section>
+
+    <!-- 11. Constellation Network -->
+    <section class="constellation-section section-target">
+        <div class="absolute z-10 text-center pointer-events-none mix-blend-difference">
+            <span class="badge text-white border-white">제너레이티브 아트</span>
+            <h2 class="text-white">별자리 네트워크</h2>
+            <p class="text-white mt-4">마우스를 움직여 주변의 입자들을 연결해보세요.<br>데이터의 연결성을 시각화할 때 사용됩니다.</p>
+        </div>
+        <canvas id="network-canvas"></canvas>
+    </section>
+
+    <!-- 12. Gravity Playground -->
+    <section class="gravity-section h-screen section-target">
+        <div class="gravity-ui">
+            <span class="badge text-white border-white">물리 엔진</span>
+            <h2 class="text-white">중력 볼</h2>
+            <p class="text-white mt-4">공을 마우스로 쳐보세요!<br>실제 중력과 마찰력이 적용된 물리 시뮬레이션입니다.</p>
+        </div>
+        <canvas id="gravity-canvas"></canvas>
+    </section>
+
+    <!-- 13. Generative Flow Field -->
+    <section class="flow-section h-screen section-target">
+        <div class="flow-ui absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <span class="badge text-white border-white">미디어 아트</span>
+            <h2 class="text-white">플로우 필드</h2>
+            <p class="text-white mt-4">마우스로 흐름을 그려보세요.<br>보이지 않는 힘의 흐름을 따라 입자들이 유화처럼 번집니다.</p>
+        </div>
+        <canvas id="flow-canvas"></canvas>
+    </section>
+
+    <!-- 14. Split Text Stagger -->
+    <section class="split-text-section h-screen section-target">
+        <span class="badge mb-10">랜딩 페이지: 히어로</span>
+        <div class="text-center">
+            <div class="split-line">
+                <h2 class="split-word text-6xl md:text-9xl font-black">DIGITAL</h2>
+            </div>
+            <div class="split-line">
+                <h2
+                    class="split-word text-6xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">
+                    CREATIVE</h2>
+            </div>
+            <div class="split-line">
+                <h2 class="split-word text-6xl md:text-9xl font-black">AGENCY</h2>
+            </div>
+        </div>
+        <p class="desc mt-10">
+            가장 트렌디한 타이틀 등장 효과입니다.<br>글자가 마스킹된 영역 아래에서 솟아오릅니다.
+        </p>
+    </section>
+
+    <!-- 15. Accordion Gallery -->
+    <section class="accordion-section h-screen section-target">
+        <span class="badge mb-10">랜딩 페이지: 서비스 소개</span>
+        <h2 class="mb-10 text-4xl">주요 기능 (Accordion)</h2>
+        <div class="accordion-container">
+            <div class="acc-item"><img src="https://picsum.photos/id/101/600/800">
+                <div class="acc-text">
+                    <h3>Strategy</h3>
+                    <p>전략 기획</p>
+                </div>
+            </div>
+            <div class="acc-item"><img src="https://picsum.photos/id/102/600/800">
+                <div class="acc-text">
+                    <h3>Design</h3>
+                    <p>UI/UX 디자인</p>
+                </div>
+            </div>
+            <div class="acc-item"><img src="https://picsum.photos/id/103/600/800">
+                <div class="acc-text">
+                    <h3>Dev</h3>
+                    <p>웹 개발</p>
+                </div>
+            </div>
+        </div>
+        <p class="desc mt-8">마우스를 올려보세요. 좁은 공간에 많은 정보를<br>세련되게 담을 수 있는 아코디언 UI입니다.</p>
+    </section>
+
+    <!-- 16. Hover Image Reveal -->
+    <section class="hover-reveal-section h-screen section-target">
+        <span class="badge mb-10">랜딩 페이지: 메뉴 인터랙션</span>
+        <h2 class="mb-10 text-4xl">포트폴리오 (Image Reveal)</h2>
+        <div class="hover-list">
+            <div class="hover-item" data-img="https://picsum.photos/id/201/400/500">
+                <h3>Nike Campaign</h3>
+                <p class="text-sm text-gray-500">Brand Film</p>
+            </div>
+            <div class="hover-item" data-img="https://picsum.photos/id/202/400/500">
+                <h3>Apple Website</h3>
+                <p class="text-sm text-gray-500">Web Development</p>
+            </div>
+        </div>
+        <div class="reveal-img-container"><img class="reveal-img" src=""></div>
+        <p class="desc mt-10">리스트에 마우스를 올리면<br>관련 이미지가 커서를 따라다니며 나타납니다.</p>
+    </section>
+
+    <!-- 17. Interactive Water Ripple -->
+    <section class="ripple-section h-screen section-target">
+        <div class="absolute z-10 text-center pointer-events-none mix-blend-difference">
+            <span class="badge text-white border-white">유체 시뮬레이션</span>
+            <h2 class="text-white">수면 파동</h2>
+            <p class="text-white mt-4">마우스를 움직여보세요.<br>물리적으로 계산된 사실적인 물결 파동이 일어납니다.</p>
+        </div>
+        <canvas id="ripple-canvas"></canvas>
+    </section>
+
+    <!-- 18. RGB Kinetic Typography -->
+    <section class="rgb-section h-screen section-target">
+        <div class="text-center">
+            <span class="badge mb-10">키네틱 효과</span>
+            <div class="rgb-text">
+                <span class="rgb-layer rgb-r">VELOCITY</span>
+                <span class="rgb-layer rgb-g">VELOCITY</span>
+                <span class="rgb-layer rgb-b">VELOCITY</span>
+                VELOCITY
+            </div>
+            <p class="desc mt-8">스크롤을 빠르게 할수록<br>RGB 색상 채널이 분리되는 글리치 효과입니다.</p>
+        </div>
+    </section>
+
+    <section class="h-[50vh] bg-neutral-800 flex flex-col justify-center items-center">
+        <h3 class="text-2xl text-gray-400">The End.</h3>
+    </section>
+
+    <script>
+        // Setup Lenis
+        const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smooth: true });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Preloader & Nav
+        window.onload = () => { const tl = gsap.timeline(); tl.to(".loader-bar", { width: "100%", duration: 1.5, ease: "power2.inOut" }).to(".loader-text", { y: -50, opacity: 0, duration: 0.5 }).to(".preloader", { yPercent: -100, duration: 1, ease: "power4.inOut" }); };
+        const navItems = document.querySelectorAll(".nav-item"); const sections = document.querySelectorAll(".section-target");
+        function scrollToSection(index) { lenis.scrollTo(sections[index]); }
+        sections.forEach((sec, i) => { ScrollTrigger.create({ trigger: sec, start: "top center", end: "bottom center", onEnter: () => updateNav(i), onEnterBack: () => updateNav(i) }); });
+        function updateNav(index) { navItems.forEach(item => item.classList.remove("active")); if (navItems[index]) navItems[index].classList.add("active"); }
+        const cursor = document.querySelector(".custom-cursor"); const hoverElements = document.querySelectorAll("[data-cursor='active'], .nav-item, .hover-item, .acc-item");
+        window.addEventListener("mousemove", (e) => { gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1, ease: "power2.out" }); });
+        hoverElements.forEach(el => { el.addEventListener("mouseenter", () => cursor.classList.add("active")); el.addEventListener("mouseleave", () => cursor.classList.remove("active")); });
+
+        // Existing Animations (Compressed for brevity)
+        gsap.to(".mask-bg", { clipPath: "circle(150% at 50% 50%)", ease: "none", scrollTrigger: { trigger: ".mask-section", start: "top top", end: "+=1500", scrub: 1, pin: true } });
+        gsap.to(".theme-section", { backgroundColor: "#ffffff", color: "#000000", duration: 0.5, ease: "power2.inOut", scrollTrigger: { trigger: ".theme-section", start: "top 60%", end: "bottom 60%", toggleActions: "play reverse play reverse" } });
+        gsap.utils.toArray(".rolling-line").forEach((line) => { gsap.set(line, { y: 100, rotateX: -90, opacity: 0 }); gsap.to(line, { y: 0, rotateX: 0, opacity: 1, duration: 1.2, ease: "power3.out", scrollTrigger: { trigger: ".rolling-text-section", start: "top 75%", end: "bottom 75%", scrub: 1 } }); });
+        const path = document.querySelector("#draw-path"); const pathLength = path.getTotalLength(); gsap.set(path, { strokeDasharray: pathLength, strokeDashoffset: pathLength }); gsap.to(path, { strokeDashoffset: 0, ease: "none", scrollTrigger: { trigger: ".svg-draw-section", start: "top center", end: "bottom center", scrub: 1 } });
+        const explodeTl = gsap.timeline({ scrollTrigger: { trigger: ".explode-section", start: "top top", end: "+=2000", scrub: 1, pin: true } }); gsap.utils.toArray(".explode-item").forEach((item) => { explodeTl.to(item, { x: (Math.random() - 0.5) * 900, y: (Math.random() - 0.5) * 700, rotation: (Math.random() - 0.5) * 60, opacity: 1, scale: 1, duration: 1, ease: "power2.out" }, 0); });
+        let skewProxy = { skew: 0 }; const skewImages = document.querySelectorAll(".skew-item img"); lenis.on('scroll', (e) => { gsap.to(skewProxy, { skew: e.velocity * 0.25, duration: 0.2, ease: "power3.out", overwrite: true }); }); gsap.ticker.add(() => { if (Math.abs(skewProxy.skew) > 0.01) { gsap.set(skewImages, { skewY: skewProxy.skew, force3D: true }); } });
+        const holoCard = document.querySelector('.holo-card'); const holoGlare = document.querySelector('.holo-glare'); holoCard.addEventListener('mousemove', (e) => { const rect = holoCard.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top; const centerX = rect.width / 2; const centerY = rect.height / 2; const rotateX = ((y - centerY) / centerY) * -10; const rotateY = ((x - centerX) / centerX) * 10; const glareX = (x / rect.width) * 100; const glareY = (y / rect.height) * 100; gsap.to(holoCard, { rotateX: rotateX, rotateY: rotateY, duration: 0.3, ease: "power2.out" }); gsap.to(holoGlare, { opacity: 0.6, background: `radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255,255,255,0.4), transparent 60%)`, duration: 0.1 }); }); holoCard.addEventListener('mouseleave', () => { gsap.to(holoCard, { rotateX: 0, rotateY: 0, duration: 0.5, ease: "elastic.out(1, 0.5)" }); gsap.to(holoGlare, { opacity: 0, duration: 0.5 }); });
+        gsap.to(".pin-zoom-img", { width: "100vw", height: "100vh", borderRadius: 0, ease: "none", scrollTrigger: { trigger: ".pin-zoom-section", start: "top top", end: "+=1000", scrub: true, pin: true } });
+        gsap.to(".reveal-text", { backgroundPosition: "0% 0", ease: "none", scrollTrigger: { trigger: ".text-reveal-container", start: "top 70%", end: "bottom 30%", scrub: 1 } });
+        gsap.to(".progress-bar", { width: "100%", ease: "none", scrollTrigger: { trigger: "body", start: "top top", end: "bottom bottom", scrub: 0 } });
+        // Particle
+        const particleCanvas = document.getElementById('particle-canvas'); const pCtx = particleCanvas.getContext('2d'); particleCanvas.width = window.innerWidth > 800 ? 800 : window.innerWidth - 40; particleCanvas.height = 300; let particlesArray = []; const pMouse = { x: null, y: null, radius: 100 }; particleCanvas.addEventListener('mousemove', function (e) { const rect = particleCanvas.getBoundingClientRect(); pMouse.x = e.x - rect.left; pMouse.y = e.y - rect.top; }); particleCanvas.addEventListener('mouseleave', function () { pMouse.x = null; pMouse.y = null; }); class Particle { constructor(x, y) { this.x = x; this.y = y; this.size = 2; this.baseX = x; this.baseY = y; this.density = (Math.random() * 30) + 1; } draw() { pCtx.fillStyle = 'white'; pCtx.beginPath(); pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2); pCtx.closePath(); pCtx.fill(); } update() { let dx = pMouse.x - this.x; let dy = pMouse.y - this.y; let distance = Math.sqrt(dx * dx + dy * dy); let forceDirectionX = dx / distance; let forceDirectionY = dy / distance; let maxDistance = pMouse.radius; let force = (maxDistance - distance) / maxDistance; let directionX = forceDirectionX * force * this.density; let directionY = forceDirectionY * force * this.density; if (distance < pMouse.radius) { this.x -= directionX * 5; this.y -= directionY * 5; } else { if (this.x !== this.baseX) { let dx = this.x - this.baseX; this.x -= dx / 10; } if (this.y !== this.baseY) { let dy = this.y - this.baseY; this.y -= dy / 10; } } } } function initParticles() { particlesArray = []; pCtx.fillStyle = 'white'; pCtx.font = 'bold 100px Verdana'; pCtx.textAlign = 'center'; pCtx.fillText('TOUCH ME', particleCanvas.width / 2, particleCanvas.height / 2 + 30); const textCoordinates = pCtx.getImageData(0, 0, particleCanvas.width, particleCanvas.height); for (let y = 0, y2 = textCoordinates.height; y < y2; y += 4) { for (let x = 0, x2 = textCoordinates.width; x < x2; x += 4) { if (textCoordinates.data[(y * 4 * textCoordinates.width) + (x * 4) + 3] > 128) { particlesArray.push(new Particle(x, y)); } } } } function animateParticles() { pCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height); for (let i = 0; i < particlesArray.length; i++) { particlesArray[i].draw(); particlesArray[i].update(); } requestAnimationFrame(animateParticles); } initParticles(); animateParticles();
+        // Constellation
+        const netCanvas = document.getElementById('network-canvas'); const nCtx = netCanvas.getContext('2d'); netCanvas.width = window.innerWidth; netCanvas.height = window.innerHeight; let netParticles = []; const nMouse = { x: null, y: null }; netCanvas.addEventListener('mousemove', (e) => { const rect = netCanvas.getBoundingClientRect(); nMouse.x = e.x - rect.left; nMouse.y = e.y - rect.top; }); netCanvas.addEventListener('mouseleave', () => { nMouse.x = null; nMouse.y = null; }); class NetParticle { constructor() { this.x = Math.random() * netCanvas.width; this.y = Math.random() * netCanvas.height; this.vx = (Math.random() - 0.5) * 1.5; this.vy = (Math.random() - 0.5) * 1.5; this.size = 3; } update() { this.x += this.vx; this.y += this.vy; if (this.x > netCanvas.width || this.x < 0) this.vx *= -1; if (this.y > netCanvas.height || this.y < 0) this.vy *= -1; if (nMouse.x != null) { let dx = nMouse.x - this.x; let dy = nMouse.y - this.y; let distance = Math.sqrt(dx * dx + dy * dy); if (distance < 150) { const angle = Math.atan2(dy, dx); this.x -= Math.cos(angle) * 2; this.y -= Math.sin(angle) * 2; } } } draw() { nCtx.fillStyle = '#00f260'; nCtx.beginPath(); nCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2); nCtx.fill(); } } function initNet() { netParticles = []; for (let i = 0; i < 80; i++) netParticles.push(new NetParticle()); } function animateNet() { nCtx.clearRect(0, 0, netCanvas.width, netCanvas.height); for (let i = 0; i < netParticles.length; i++) { netParticles[i].update(); netParticles[i].draw(); for (let j = i; j < netParticles.length; j++) { let dx = netParticles[i].x - netParticles[j].x; let dy = netParticles[i].y - netParticles[j].y; let distance = Math.sqrt(dx * dx + dy * dy); if (distance < 120) { nCtx.beginPath(); nCtx.strokeStyle = `rgba(0, 242, 96, ${1 - distance / 120})`; nCtx.lineWidth = 1; nCtx.moveTo(netParticles[i].x, netParticles[i].y); nCtx.lineTo(netParticles[j].x, netParticles[j].y); nCtx.stroke(); } } if (nMouse.x != null) { let dx = nMouse.x - netParticles[i].x; let dy = nMouse.y - netParticles[i].y; let distance = Math.sqrt(dx * dx + dy * dy); if (distance < 150) { nCtx.beginPath(); nCtx.strokeStyle = `rgba(5, 117, 230, ${1 - distance / 150})`; nCtx.moveTo(nMouse.x, nMouse.y); nCtx.lineTo(netParticles[i].x, netParticles[i].y); nCtx.stroke(); } } } requestAnimationFrame(animateNet); } initNet(); animateNet();
+        // Gravity
+        const gravCanvas = document.getElementById('gravity-canvas'); const gCtx = gravCanvas.getContext('2d'); gravCanvas.width = window.innerWidth; gravCanvas.height = window.innerHeight; let balls = []; const gravity = 0.5; const friction = 0.9; const gMouse = { x: undefined, y: undefined }; gravCanvas.addEventListener('mousemove', (e) => { const rect = gravCanvas.getBoundingClientRect(); gMouse.x = e.x - rect.left; gMouse.y = e.y - rect.top; }); gravCanvas.addEventListener('mouseleave', () => { gMouse.x = undefined; gMouse.y = undefined; }); class Ball { constructor(x, y, dy, radius, color) { this.x = x; this.y = y; this.dy = dy; this.dx = (Math.random() - 0.5) * 4; this.radius = radius; this.color = color; } update() { if (this.y + this.radius + this.dy > gravCanvas.height) { this.dy = -this.dy * friction; } else { this.dy += gravity; } if (this.x + this.radius + this.dx > gravCanvas.width || this.x - this.radius <= 0) { this.dx = -this.dx; } this.x += this.dx; this.y += this.dy; if (gMouse.x != undefined) { let dist = Math.hypot(gMouse.x - this.x, gMouse.y - this.y); if (dist < 100) { if (gMouse.x < this.x) this.dx += 2; else this.dx -= 2; if (gMouse.y < this.y) this.dy -= 5; } } this.draw(); } draw() { gCtx.beginPath(); gCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false); gCtx.fillStyle = this.color; gCtx.fill(); gCtx.stroke(); gCtx.strokeStyle = "rgba(255,255,255,0.2)"; gCtx.closePath(); } } function initGravity() { balls = []; const colors = ['#00f260', '#0575e6', '#ffffff', '#ff0080']; for (let i = 0; i < 30; i++) { let radius = Math.random() * 20 + 10; let x = Math.random() * (gravCanvas.width - radius * 2) + radius; let y = Math.random() * (gravCanvas.height / 2); let dy = Math.random() * 4 + 1; let color = colors[Math.floor(Math.random() * colors.length)]; balls.push(new Ball(x, y, dy, radius, color)); } } function animateGravity() { gCtx.clearRect(0, 0, gravCanvas.width, gravCanvas.height); for (let i = 0; i < balls.length; i++) { balls[i].update(); } requestAnimationFrame(animateGravity); } initGravity(); animateGravity();
+        // Flow Field
+        const flowCanvas = document.getElementById('flow-canvas'); const fCtx = flowCanvas.getContext('2d'); flowCanvas.width = window.innerWidth; flowCanvas.height = window.innerHeight; let fParticles = []; const fMouse = { x: null, y: null }; flowCanvas.addEventListener('mousemove', (e) => { const rect = flowCanvas.getBoundingClientRect(); fMouse.x = e.x - rect.left; fMouse.y = e.y - rect.top; }); class FlowParticle { constructor() { this.x = Math.random() * flowCanvas.width; this.y = Math.random() * flowCanvas.height; this.speedX = Math.random() * 3 - 1.5; this.speedY = Math.random() * 3 - 1.5; this.history = [{ x: this.x, y: this.y }]; this.maxLength = Math.random() * 20 + 10; this.angle = 0; this.color = `hsl(${Math.random() * 60 + 200}, 70%, 50%)`; } update() { this.angle = (Math.cos(this.x * 0.005) + Math.sin(this.y * 0.005)) * 5; if (fMouse.x != null) { const dx = this.x - fMouse.x; const dy = this.y - fMouse.y; const dist = Math.sqrt(dx * dx + dy * dy); if (dist < 200) { this.angle += Math.atan2(dy, dx) * 2; } } this.speedX = Math.cos(this.angle); this.speedY = Math.sin(this.angle); this.x += this.speedX * 2; this.y += this.speedY * 2; this.history.push({ x: this.x, y: this.y }); if (this.history.length > this.maxLength) { this.history.shift(); } if (this.x > flowCanvas.width) { this.x = 0; this.history = []; } else if (this.x < 0) { this.x = flowCanvas.width; this.history = []; } if (this.y > flowCanvas.height) { this.y = 0; this.history = []; } else if (this.y < 0) { this.y = flowCanvas.height; this.history = []; } } draw() { fCtx.beginPath(); fCtx.strokeStyle = this.color; fCtx.lineWidth = 1; if (this.history.length > 0) { fCtx.moveTo(this.history[0].x, this.history[0].y); for (let i = 1; i < this.history.length; i++) { fCtx.lineTo(this.history[i].x, this.history[i].y); } } fCtx.stroke(); } } function initFlow() { fParticles = []; for (let i = 0; i < 400; i++) { fParticles.push(new FlowParticle()); } } function animateFlow() { fCtx.fillStyle = 'rgba(0, 0, 0, 0.05)'; fCtx.fillRect(0, 0, flowCanvas.width, flowCanvas.height); for (let i = 0; i < fParticles.length; i++) { fParticles[i].update(); fParticles[i].draw(); } requestAnimationFrame(animateFlow); } initFlow(); animateFlow();
+        // Landing (Split, Accordion, Hover)
+        const splitWords = document.querySelectorAll(".split-word"); gsap.to(splitWords, { transform: "translateY(0%)", duration: 1.2, stagger: 0.1, ease: "power4.out", scrollTrigger: { trigger: ".split-text-section", start: "top 70%", } });
+        const hoverItems = document.querySelectorAll('.hover-item'); const revealContainer = document.querySelector('.reveal-img-container'); const revealImg = document.querySelector('.reveal-img'); hoverItems.forEach(item => { item.addEventListener('mouseenter', () => { const imgUrl = item.getAttribute('data-img'); revealImg.src = imgUrl; gsap.to(revealContainer, { autoAlpha: 1, scale: 1, duration: 0.3 }); }); item.addEventListener('mouseleave', () => { gsap.to(revealContainer, { autoAlpha: 0, scale: 0.8, duration: 0.3 }); }); item.addEventListener('mousemove', (e) => { gsap.to(revealContainer, { x: e.clientX, y: e.clientY, duration: 0.5, ease: "power3.out" }); }); });
+
+
+        // --- NEW 17: Interactive Water Ripple (Canvas Algorithm) ---
+        const rippleCanvas = document.getElementById('ripple-canvas');
+        const rCtx = rippleCanvas.getContext('2d');
+        let rWidth, rHeight;
+        let rBuffer1, rBuffer2, rData;
+        const damping = 0.95; // 파동 감쇠 계수
+
+        function initRipple() {
+            // Prevent 0 dimension error
+            rWidth = window.innerWidth > 0 ? window.innerWidth : 100;
+            rHeight = window.innerHeight > 0 ? window.innerHeight : 100;
+
+            rippleCanvas.width = rWidth;
+            rippleCanvas.height = rHeight;
+
+            // 픽셀 데이터 배열 (성능을 위해 비트 시프트 연산용 Int32 사용 고려 가능하지만 여기선 Float)
+            rBuffer1 = new Array(rWidth * rHeight).fill(0);
+            rBuffer2 = new Array(rWidth * rHeight).fill(0);
+
+            // 배경 이미지 로드 (없으면 단색 배경 위에서만 파동이 보임)
+            // 여기선 간단하게 파란색 그라데이션 픽셀을 직접 그림
+            rData = rCtx.createImageData(rWidth, rHeight);
+        }
+
+        // 파동 발생 함수
+        function disturb(x, y, amount) {
+            if (x < 1 || x >= rWidth - 1 || y < 1 || y >= rHeight - 1) return;
+            // 버퍼에 에너지 추가
+            rBuffer1[x + y * rWidth] += amount;
+        }
+
+        // 마우스 이동 시 파동 발생
+        rippleCanvas.addEventListener('mousemove', (e) => {
+            const rect = rippleCanvas.getBoundingClientRect();
+            disturb(Math.floor(e.clientX - rect.left), Math.floor(e.clientY - rect.top), 500); // 500: 파동 강도
+        });
+
+        function animateRipple() {
+            // 파동 전파 알고리즘
+            for (let y = 1; y < rHeight - 1; y++) {
+                for (let x = 1; x < rWidth - 1; x++) {
+                    const idx = x + y * rWidth;
+                    // 상하좌우 픽셀 평균 - 현재 픽셀 = 새 값 (가장 기본적인 파동 방정식 근사)
+                    rBuffer2[idx] = (
+                        rBuffer1[idx - 1] +
+                        rBuffer1[idx + 1] +
+                        rBuffer1[idx - rWidth] +
+                        rBuffer1[idx + rWidth]
+                    ) / 2 - rBuffer2[idx];
+
+                    rBuffer2[idx] *= damping;
+                }
+            }
+
+            // 렌더링 (픽셀 데이터 업데이트)
+            // 성능 이슈 방지를 위해 해상도를 낮추거나 배경 이미지를 왜곡하는 방식이 좋으나
+            // 여기선 순수 시각화를 위해 픽셀 색상값에 파동 높이를 반영
+            const pixelData = rData.data;
+            for (let i = 0; i < rWidth * rHeight; i++) {
+                // 파동의 높이에 따라 픽셀 밝기 조절 (흑백 물결 효과)
+                let val = rBuffer2[i];
+                val = val > 255 ? 255 : val < 0 ? 0 : val;
+
+                const index = i * 4;
+                pixelData[index] = val;     // R
+                pixelData[index + 1] = val; // G
+                pixelData[index + 2] = 255; // B (파란색 베이스)
+                pixelData[index + 3] = 255; // Alpha
+            }
+
+            rCtx.putImageData(rData, 0, 0);
+
+            // 버퍼 교체
+            let temp = rBuffer1;
+            rBuffer1 = rBuffer2;
+            rBuffer2 = temp;
+
+            requestAnimationFrame(animateRipple);
+        }
+
+        initRipple();
+        animateRipple();
+
+
+        // --- NEW 18: RGB Kinetic Typography ---
+        let rgbProxy = { skew: 0 };
+        const rgbR = document.querySelector('.rgb-r');
+        const rgbG = document.querySelector('.rgb-g');
+        const rgbB = document.querySelector('.rgb-b');
+
+        lenis.on('scroll', (e) => {
+            // 스크롤 속도에 비례해 x축 이동 거리 계산
+            const velocity = e.velocity * 2;
+
+            gsap.to(rgbR, { x: -velocity, duration: 0.1 });
+            gsap.to(rgbB, { x: velocity, duration: 0.1 });
+            // G채널은 중앙 유지하거나 살짝 왜곡
+            gsap.to(rgbG, { scaleY: 1 + Math.abs(velocity * 0.005), duration: 0.1 });
+        });
+
+        // Global Resize Listener
+        window.addEventListener('resize', () => {
+            netCanvas.width = window.innerWidth; netCanvas.height = window.innerHeight; initNet();
+            gravCanvas.width = window.innerWidth; gravCanvas.height = window.innerHeight; initGravity();
+            particleCanvas.width = window.innerWidth > 800 ? 800 : window.innerWidth - 40; initParticles();
+            flowCanvas.width = window.innerWidth; flowCanvas.height = window.innerHeight; initFlow();
+            initRipple();
+        });
+
+    </script>
+</body>
+
+</html>

@@ -2,18 +2,19 @@ import { useSearchParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import TeamTabs from "./TeamTabs";
 
+import Team14 from "./Team14"; // 14기 페이지
 import Team13 from "./Team13"; // 13기 페이지
 import Team12 from "./Team12"; // 12기 페이지
 import Team11 from "./Team11"; // 11기 페이지
 
 export default function TeamPage() {
   const [searchParams] = useSearchParams();
-  const defaultTab = searchParams.get("tab") || "13";
+  const defaultTab = searchParams.get("tab") || "14";
   const [activeTab, setActiveTab] = useState(defaultTab);
 
   useEffect(() => {
     const tab = searchParams.get("tab");
-    if (tab && ["13", "12", "11"].includes(tab)) {
+    if (tab && ["14", "13", "12", "11"].includes(tab)) {
       setActiveTab(tab);
     }
   }, [searchParams]);
@@ -32,6 +33,7 @@ export default function TeamPage() {
 
         <TeamTabs activeTab={activeTab} onTabClick={setActiveTab} />
 
+        {activeTab === "14" && <Team14 />}
         {activeTab === "13" && <Team13 />}
         {activeTab === "12" && <Team12 />}
         {activeTab === "11" && <Team11 />}

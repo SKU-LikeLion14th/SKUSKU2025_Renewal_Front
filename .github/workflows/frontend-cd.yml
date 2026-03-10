@@ -36,24 +36,29 @@ jobs:
       - name: Build
         run: npm run build
 
-      # 빌드 결과물(dist) 업로드
+      # dist 폴더를 압축 파일로 생성
+      - name: Archive dist
+        run: tar -czf dist.tar.gz dist
+
+      # 빌드 결과물(dist.tar.gz) 업로드
       - name: Upload dist artifact
         uses: actions/upload-artifact@v4
         with:
-          name: dist
-          path: dist
+          name: dist-archive
+          path: dist.tar.gz
+          
   # 빌드 성공하면
   deploy:
     needs: build
     runs-on: ubuntu-latest
 
     steps:
-      # build job에서 생성한 dist 다운로드
+      # build job에서 생성한 dist 압축 파일 다운로드
       - name: Download dist artifact
         uses: actions/download-artifact@v4
         with:
-          name: dist
-          path: dist
+          name: dist-archive
+          path: .
 
       # test
       - name: Debug SSH variables
@@ -75,19 +80,12 @@ jobs:
         run: |
           ssh -i ~/.ssh/deploy_key -p ${{ secrets.FRONT_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "rm -rf /home/ubuntu/renewal/dist"
 
-      # dist 파일 업로드 전 dist 위치 및 파일 확인
-      - name: Check dist before upload
+      # dist 압축 파일 업로드
+      - name: Upload dist archive
         run: |
-          pwd
-          ls -al
-          ls -al dist
+          scp -i ~/.ssh/deploy_key -P ${{ secrets.FRONT_PORT }} dist.tar.gz ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/renewal
 
-      # dist 업로드
-      - name: Upload dist
+      # 압축 해제 후 nginx 검사 및 reload
+      - name: Extract dist and reload nginx
         run: |
-          scp -i ~/.ssh/deploy_key -P ${{ secrets.FRONT_PORT }} -r dist ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/renewal
-
-      # nginx 검사 및 reload
-      - name: Reload nginx
-        run: |
-          ssh -i ~/.ssh/deploy_key -p ${{ secrets.FRONT_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "sudo nginx -t && sudo nginx -s reload"
+          ssh -i ~/.ssh/deploy_key -p ${{ secrets.FRONT_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "cd /home/ubuntu/renewal && tar -xzf dist.tar.gz && rm -f dist.tar.gz && sudo nginx -t && sudo nginx -s reload"

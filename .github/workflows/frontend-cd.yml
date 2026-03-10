@@ -1,0 +1,79 @@
+name: Frontend CD
+
+# push 가 발생하면
+on:
+  push:
+    branches:
+      - main
+
+# GitHub 토큰 권한 최소화
+# 필요한 최소 권한만을 부여한다.
+permissions:
+  contents: read
+
+# 너가 행할 일을 알려줄게~
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 저장소 코드 가져오기
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      # Node.js 환경 설정
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 의존성 설치
+      - name: Install dependencies
+        run: npm ci
+
+      # 프론트엔드 빌드
+      # 하면 dist 폴더 생성
+      - name: Build
+        run: npm run build
+
+      # 빌드 결과물(dist) 업로드
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+  # 빌드 성공하면
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      # build job에서 생성한 dist 다운로드
+      - name: Download dist artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: .
+
+      # SSH 키 설정
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.MY_PEM_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p ${{ secrets.FRONT_PORT }} ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+      # 기존 dist 삭제
+      - name: Remove old dist
+        run: |
+          ssh -i ~/.ssh/deploy_key -p ${{ secrets.FRONT_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "rm -rf /home/ubuntu/renewal/dist"
+
+      # dist 업로드
+      - name: Upload dist
+        run: |
+          scp -i ~/.ssh/deploy_key -P ${{ secrets.FRONT_PORT }} -r dist ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }}:/home/ubuntu/renewal
+
+      # nginx 검사 및 reload
+      - name: Reload nginx
+        run: |
+          ssh -i ~/.ssh/deploy_key -p ${{ secrets.FRONT_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "sudo nginx -t && sudo nginx -s reload"

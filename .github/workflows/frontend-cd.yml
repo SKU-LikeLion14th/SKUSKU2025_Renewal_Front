@@ -55,6 +55,13 @@ jobs:
           name: dist
           path: .
 
+      # test
+      - name: Debug SSH variables
+        run: |
+          echo "SSH_USER=[${{ secrets.SSH_USER }}]"
+          echo "SERVER_IP=[${{ secrets.SERVER_IP }}]"
+          echo "PORT=[${{ secrets.FRONT_PORT }}]"
+
       # SSH 키 설정
       - name: Setup SSH
         run: |

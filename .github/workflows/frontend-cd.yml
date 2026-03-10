@@ -6,7 +6,7 @@ on:
     branches:
       - main
 
-# GitHub 토큰 권한 최소화
+# GitHub 토큰 권한 최소화 
 # 필요한 최소 권한만을 부여한다.
 permissions:
   contents: read

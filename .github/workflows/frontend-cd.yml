@@ -75,6 +75,13 @@ jobs:
         run: |
           ssh -i ~/.ssh/deploy_key -p ${{ secrets.FRONT_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "rm -rf /home/ubuntu/renewal/dist"
 
+      # dist 파일 업로드 전 dist 위치 및 파일 확인
+      - name: Check dist before upload
+        run: |
+          pwd
+          ls -al
+          ls -al dist
+
       # dist 업로드
       - name: Upload dist
         run: |

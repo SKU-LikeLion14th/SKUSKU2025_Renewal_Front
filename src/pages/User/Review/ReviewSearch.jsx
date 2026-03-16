@@ -47,6 +47,20 @@ export default function ReviewSearch({
     }
   };
 
+  // Pagination logic
+  const pageNumbers = [];
+  const maxVisiblePages = 5;
+  let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+  let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+  if (endPage - startPage + 1 < maxVisiblePages) {
+    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    pageNumbers.push(i);
+  }
+
   return (
     <div className="flex w-full sm:mb-40 mb-20">
           <div className="flex justify-between w-full p-2 items-center sm:text-[14px] text-[10px]">
@@ -77,8 +91,50 @@ export default function ReviewSearch({
               </div>
             </div>
     
-            <div className="flex items-center justify-center w-[70px] sm:w-fit px-4 sm:text-[14px] text-[10px] font-medium">
-              - {inputPage} -
+            <div className="flex items-center justify-center space-x-1 sm:text-[14px] text-[10px] font-medium">
+              <button
+                onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="px-2 py-1 rounded border border-[#D8D8D8] bg-white disabled:opacity-50 cursor-pointer"
+              >
+                &lt;
+              </button>
+              
+              {startPage > 1 && (
+                <>
+                  <button onClick={() => onPageChange(1)} className="px-2 py-1 rounded border border-[#D8D8D8] bg-white cursor-pointer">1</button>
+                  {startPage > 2 && <span className="px-1">...</span>}
+                </>
+              )}
+
+              {pageNumbers.map((p) => (
+                <button
+                  key={p}
+                  onClick={() => onPageChange(p)}
+                  className={`px-3 py-1 rounded border cursor-pointer ${
+                    currentPage === p
+                      ? "bg-[#3B79FF] text-white border-[#3B79FF] font-bold"
+                      : "bg-white border-[#D8D8D8]"
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
+
+              {endPage < totalPages && (
+                <>
+                  {endPage < totalPages - 1 && <span className="px-1">...</span>}
+                  <button onClick={() => onPageChange(totalPages)} className="px-2 py-1 rounded border border-[#D8D8D8] bg-white cursor-pointer">{totalPages}</button>
+                </>
+              )}
+
+              <button
+                onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className="px-2 py-1 rounded border border-[#D8D8D8] bg-white disabled:opacity-50 cursor-pointer"
+              >
+                &gt;
+              </button>
             </div>
     
             {/* 검색 */}

@@ -11,7 +11,7 @@ const CCFooter = () => {
           <Link to="/project" className="text-[#72A6FF] fontBold mb-4">
             PROJECT
           </Link>
-          {[13, 12, 11].map((gen) => (
+          {[14, 13, 12, 11].map((gen) => (
             <Link key={gen} to={`/project?tab=${gen}`} className="my-2 ">
               {gen}기
             </Link>
@@ -23,7 +23,7 @@ const CCFooter = () => {
           <Link to="/team" className="text-[#72A6FF] fontBold mb-4">
             TEAM
           </Link>
-          {[13, 12, 11].map((gen) => (
+          {[14, 13, 12, 11].map((gen) => (
             <Link key={gen} to={`/team?tab=${gen}`} className="my-2">
               {gen}기
             </Link>

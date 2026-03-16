@@ -43,14 +43,16 @@ export default function CCHeader() {
     {
       title: { label: "PROJECT", path: buildPath("project") },
       subItems: [
+        { label: "14기", path: buildPath("project?tab=14") },
         { label: "13기", path: buildPath("project?tab=13") },
         { label: "12기", path: buildPath("project?tab=12") },
         { label: "11기", path: buildPath("project?tab=11") },
       ],
     },
     {
-      title: { label: "TEAM", path: "/team?tab=13" },
+      title: { label: "TEAM", path: "/team?tab=14" },
       subItems: [
+        { label: "14기", path: "/team?tab=14" },
         { label: "13기", path: "/team?tab=13" },
         { label: "12기", path: "/team?tab=12" },
         { label: "11기", path: "/team?tab=11" },
@@ -82,7 +84,7 @@ export default function CCHeader() {
   return (
     <div
       className={`fixed z-100 top-0 w-full transition-all duration-300
-        ${isHovered ? "bg-[#4A4A4A] min-h-[280px]" : "backdrop-blur-2xl"}
+        ${isHovered ? "bg-[#4A4A4A] min-h-[320px]" : "backdrop-blur-2xl"}
       `}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -165,31 +167,18 @@ export default function CCHeader() {
             className={`transition-opacity duration-300 space-x-4 hidden xl:flex ${isHovered ? "flex opacity-100" : "hidden opacity-0"
               }`}
           >
-            <div className="relative" ref={tooltipRef}>
-              <button
-                className="text-[13px] px-6 py-1 flex items-center rounded-3xl text-[#232323] bg-white fontBold"
-                onClick={() => setIsTooltipVisible((prev) => !prev)}
-              >
-                제작자
-              </button>
-              {isTooltipVisible && (
-                <div className="absolute top-[140%] left-1/2 -translate-x-1/2 bg-white border border-gray-500 rounded-lg shadow-md px-4 py-2 text-sm text-black whitespace-nowrap z-20">
-                  12, 13기 운영진이 제작했습니다!
-                  <div className="absolute top-[-8px] left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-l border-t border-gray-500 rotate-45"></div>
-                </div>
-              )}
-            </div>
+
             <a
               href="https://www.instagram.com/likelion_sku?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
-              className="flex items-center rounded-full bg-white"
+              className="w-8 h-8 flex items-center justify-center rounded-full bg-white text-black"
             >
-              <FaInstagram className="w-7" />
+              <FaInstagram className="w-5 h-5" />
             </a>
             <a
               href="#"
-              className="flex items-center mr-6 rounded-full bg-white"
+              className="w-8 h-8 flex items-center justify-center mr-6 rounded-full bg-white text-black"
             >
-              <BiSolidMessageRoundedDots className="w-7" />
+              <BiSolidMessageRoundedDots className="w-5 h-5" />
             </a>
           </div>
 

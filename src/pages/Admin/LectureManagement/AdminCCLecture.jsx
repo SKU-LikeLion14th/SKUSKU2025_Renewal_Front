@@ -118,11 +118,20 @@ const AdminCCLecture = () => {
     ...Array(itemsPerPage - currentItems.length).fill(null),
   ];
 
+  // 매핑 로직 1회 실행
+  const trackLabelMap = {
+    FRONTEND: "FRONT-END",
+    BACKEND: "BACK-END",
+    DESIGN: "PM/DESIGN",
+  };
+  const displayTrack = trackLabelMap[trackParam] || trackParam;
+
   return (
     <div className="flex flex-col justify-start w-9/12 mx-auto sm:mt-50 mt-30 lg:w-8/12">
       <h1 className="flex fontBold sm:text-[35px] text-[23px]">
-        {track} 자료실
+        {displayTrack} 자료실
       </h1>
+
       <div className="flex justify-start w-full sm:mt-15 mt-8 pb-5">
         <Breadcrumb />
       </div>
@@ -153,11 +162,10 @@ const AdminCCLecture = () => {
           <button
             onClick={handleDelete}
             disabled={selectedItems.length === 0}
-            className={`px-3 py-2 rounded-lg ml-3 transition text-xs sm:text-sm md:text-base ${
-              selectedItems.length > 0
-                ? "bg-[#FF4D4D] text-white"
-                : "bg-[#6C6868] text-white opacity-50 cursor-not-allowed"
-            }`}
+            className={`px-3 py-2 rounded-lg ml-3 transition text-xs sm:text-sm md:text-base ${selectedItems.length > 0
+              ? "bg-[#FF4D4D] text-white"
+              : "bg-[#6C6868] text-white opacity-50 cursor-not-allowed"
+              }`}
           >
             선택 삭제
           </button>

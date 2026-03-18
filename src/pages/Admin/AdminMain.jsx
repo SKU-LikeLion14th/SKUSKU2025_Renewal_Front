@@ -21,7 +21,7 @@ export default function AdminMain() {
           프론트엔드
         </button>
         <button onClick={() => handleTrackSelect("BACK-END")}>백엔드</button>
-        <button onClick={() => handleTrackSelect("DESIGN")}>디자인</button>
+        <button onClick={() => handleTrackSelect("DESIGN")}>기획/디자인</button>
       </div>
 
       {/* 각 메뉴별 이동 */}

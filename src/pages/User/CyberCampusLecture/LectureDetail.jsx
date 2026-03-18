@@ -63,8 +63,17 @@ const LectureDetail = () => {
     <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-24 sm:mt-44 pb-24">
       {/* 제목 */}
       <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl fontBold mb-10 sm:mb-16">
-        {lecture.trackType} 자료실
+        {(() => {
+          const trackTypeMap = {
+            FRONTEND: "FRONT-END",
+            BACKEND: "BACK-END",
+            DESIGN: "PM/DESIGN",
+          };
+          const normalized = lecture.trackType?.toUpperCase();
+          return trackTypeMap[normalized] || normalized || "";
+        })()} 자료실
       </h1>
+
 
       {/* 경로 */}
       <div className="mb-12">

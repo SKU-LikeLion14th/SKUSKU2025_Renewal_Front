@@ -111,13 +111,13 @@ export default function MobileMain4() {
               className="w-8"
             />
             <div className="flex items-center space-x-2 text-[#FF6F71]">
-              <span className="text-[11px] fontBold">디자인</span>
+              <span className="text-[11px] fontBold">기획/디자인</span>
               <span className="text-[9px] fontEL">PM/DESIGN</span>
             </div>
           </div>
           <span className="text-[7px] ml-10 -mt-1 block">
             상상을 현실로 만드는 똑똑한 디자인,{" "}
-            <span className="text-[#EA4E75]">디자인팀 커리큘럼</span>을
+            <span className="text-[#EA4E75]">기획/디자인팀 커리큘럼</span>을
             소개합니다.
           </span>
           <div className="flex justify-end mt-6">

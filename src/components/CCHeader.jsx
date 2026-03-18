@@ -59,9 +59,10 @@ export default function CCHeader() {
       ],
     },
     {
-      title: { label: "COMMUNITY", path: "/", isAlert: true },
-      subItems: [{ label: "모집공고", path: "/", isAlert: true }],
+      title: { label: "COMMUNITY", path: "/community/recruit2" },
+      subItems: [{ label: "모집공고", path: "/community/recruit2" }],
     },
+
   ];
 
   function getColorByTrack(track) {
@@ -77,9 +78,10 @@ export default function CCHeader() {
     }
   }
 
-  const handleAlertClick = () => {
-    alert("내년 상반기에 다시 모집할 예정입니다. 다음 기회에 지원해주세요!");
-  };
+  // const handleAlertClick = () => {
+  //   alert("내년 상반기에 다시 모집할 예정입니다. 다음 기회에 지원해주세요!");
+  // };
+
 
   return (
     <div

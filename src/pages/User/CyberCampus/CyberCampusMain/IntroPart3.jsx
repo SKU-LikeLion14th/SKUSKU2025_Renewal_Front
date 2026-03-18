@@ -72,7 +72,7 @@ const IntroPart3 = () => {
           className="flex justify-between items-center mx-4 sm:mx-10"
         >
           <div className="title flex flex-col items-start mx-1">
-            <p className="text-[clamp(15px,5vw,25px)] fontBold mb-1">멋쟁이사자처럼 13기</p>
+            <p className="text-[clamp(15px,5vw,25px)] fontBold mb-1">멋쟁이사자처럼 14기</p>
             <p className="text-[clamp(15px,5vw,25px)] fontBold">
               <span className="text-[#1f65ff]">일정</span>을 알려드릴게요
             </p>

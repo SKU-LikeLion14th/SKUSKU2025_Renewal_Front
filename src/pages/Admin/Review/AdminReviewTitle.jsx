@@ -7,7 +7,7 @@ export default function AdminReviewTitle() {
   const trackTypeMap = {
     FRONTEND: 'FRONT-END',
     BACKEND: 'BACK-END',
-    DEGINE: 'DEGINE', // 필요하면 여기도 변경 가능
+    DESIGN: 'PM/DESIGN',
   };
 
   const displayTrack = trackTypeMap[trackType] || trackType || '';

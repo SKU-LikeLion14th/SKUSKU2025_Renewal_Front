@@ -34,13 +34,12 @@ export default function BottomCTASection() {
                 </p>
 
                 <a
-                    href="https://forms.gle/iUKyRxowKLMufkJy5"
-                    target="_blank"
-                    rel="noreferrer"
+                    onClick={() => alert("내년 상반기에 다시 모집할 예정입니다. 다음 기회에 지원해주세요!")}
                     className="group relative px-14 py-6 bg-[#3B79FF] text-white text-[22px] fontBold rounded-3xl overflow-hidden hover:bg-[#2D5ABB] hover:shadow-[0_20px_40px_rgba(59,121,255,0.3)] transition-all duration-300 cursor-pointer"
                 >
                     <span className="relative z-10">14기 지원하기</span>
                 </a>
+
             </motion.div>
         </section>
     );

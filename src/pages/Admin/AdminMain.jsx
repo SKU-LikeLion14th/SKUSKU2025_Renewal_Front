@@ -40,7 +40,7 @@ export default function AdminMain() {
           백엔드 복습하기
         </button>
         <button onClick={() => handleTrackSelect2("DESIGN")}>
-          디자인 복습하기
+          기획/디자인 복습하기
         </button>
       </div>
     </div>

@@ -148,13 +148,12 @@ export default function Main4() {
                 <motion.div
                   key={key}
                   onClick={() => setSelectedTrack(key)}
-                  className={`flex items-center cursor-pointer transition-transform hover:scale-105 ${
-                    key === "frontend"
-                      ? "hover:text-[#F75222]"
-                      : key === "backend"
+                  className={`flex items-center cursor-pointer transition-transform hover:scale-105 ${key === "frontend"
+                    ? "hover:text-[#F75222]"
+                    : key === "backend"
                       ? "hover:text-[#0ACF83]"
                       : "hover:text-[#FF6F71]"
-                  }`}
+                    }`}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.15 }}
@@ -171,13 +170,12 @@ export default function Main4() {
             <motion.div
               key="track-detail"
               ref={containerRef}
-              className={`flex items-center justify-evenly h-[160px] w-full ${
-                selectedTrack === "frontend"
-                  ? "bg-[#B74321]"
-                  : selectedTrack === "backend"
+              className={`flex items-center justify-evenly h-[160px] w-full ${selectedTrack === "frontend"
+                ? "bg-[#B74321]"
+                : selectedTrack === "backend"
                   ? "bg-[#1C7674]"
                   : "bg-[#CF637E]"
-              }`}
+                }`}
               initial={{ opacity: 0, scale: 0.95, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
@@ -199,9 +197,8 @@ export default function Main4() {
                 </div>
               </div>
               <img
-                className={`text-[16px] md:w-[50%] ${
-                  selectedTrack === "backend" ? "w-[900px]" : "w-[700px]"
-                }`}
+                className={`text-[16px] md:w-[50%] ${selectedTrack === "backend" ? "w-[900px]" : "w-[700px]"
+                  }`}
                 src={trackDetails[selectedTrack].curri}
                 alt=""
               />

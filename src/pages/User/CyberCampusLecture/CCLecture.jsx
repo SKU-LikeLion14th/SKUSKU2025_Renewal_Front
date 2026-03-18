@@ -18,7 +18,7 @@ const CCLecture = () => {
   const trackLabelMap = {
     FRONTEND: "FRONT-END",
     BACKEND: "BACK-END",
-    DESIGN: "DESIGN",
+    DESIGN: "PM/DESIGN",
   };
 
   const trackLabel = trackLabelMap[trackParam] || trackParam;

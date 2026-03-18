@@ -555,18 +555,17 @@ export default function HeroSection() {
                                     14기 아기사자를 모집합니다
                                 </div>
                                 <div className="w-full flex justify-center md:justify-start">
-                                    <DDayCounter />
+                                    {/* <DDayCounter /> */}
                                 </div>
                                 <div className="w-full flex justify-center md:justify-start mt-4 md:mt-8">
                                     <a
-                                        href="https://forms.gle/iUKyRxowKLMufkJy5"
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        className="px-8 py-4 sm:px-12 sm:py-6 bg-[#0060C6] text-white rounded-full fontBlack text-lg sm:text-2xl flex items-center justify-center gap-3 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,96,198,0.3)] transition-all duration-300 pointer-events-auto shadow-2xl"
+                                        onClick={() => alert("내년 상반기에 다시 모집할 예정입니다. 다음 기회에 지원해주세요!")}
+                                        className="cursor-pointer px-8 py-4 sm:px-12 sm:py-6 bg-[#0060C6] text-white rounded-full fontBlack text-lg sm:text-2xl flex items-center justify-center gap-3 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,96,198,0.3)] transition-all duration-300 pointer-events-auto shadow-2xl"
                                     >
                                         지원하기 <FiArrowRight size={28} />
                                     </a>
                                 </div>
+
                             </motion.div>
                         )}
                     </AnimatePresence>

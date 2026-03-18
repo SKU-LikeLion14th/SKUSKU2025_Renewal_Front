@@ -31,7 +31,7 @@ const Breadcrumb = () => {
   const rawPathnames = location.pathname.split("/").filter((x) => x);
   const isAdmin = rawPathnames.includes("admin");
 
-//숫자제거
+  //숫자제거
   const trimmed = rawPathnames.filter((x) => isNaN(x));
   let pathnames = [];
 
@@ -71,11 +71,24 @@ const Breadcrumb = () => {
           const isLast = index === pathnames.length - 1;
 
           // 라벨 처리
+          // 라벨 처리
           let label;
           if (name.includes("-")) {
-            const [track, section] = name.split("-");
+            // let을 사용하여 변수를 열어둡니다.
+            let [track, section] = name.split("-");
+
+            // 이름 변환 로직 (소문자/대문자 모두 잡아줌)
+            const trackTypeMap = {
+              FRONTEND: "FRONT-END",
+              BACKEND: "BACK-END",
+              DESIGN: "PM/DESIGN",
+            };
+            const normalizedTrack = track?.toUpperCase();
+            track = trackTypeMap[normalizedTrack] || normalizedTrack;
+
             label = `${track} ${section}`;
           } else {
+
             label = pathMap[name] || decodeURIComponent(name);
           }
 
@@ -86,9 +99,8 @@ const Breadcrumb = () => {
             const sectionKey = Object.keys(sectionMap).find(
               (key) => sectionMap[key] === sectionLabel
             );
-            routeTo = `/${
-              isAdmin ? "admin" : "cybercampus"
-            }/${sectionKey}/${track}`;
+            routeTo = `/${isAdmin ? "admin" : "cybercampus"
+              }/${sectionKey}/${track}`;
           } else {
             routeTo = "/" + rawPathnames.slice(0, index + 1).join("/");
           }

@@ -67,7 +67,7 @@ const IntroPart1 = () => {
             <p className="text-[clamp(34px,5vw,50px)] fontBold leading-tight">
               스쿠스쿠와 함께
             </p>
-            <p className="text-[clamp(34px,5vw,50px)] fontEB text-white text-stroke mb-6 leading-tight">
+            <p className="text-[clamp(34px,5vw,50px)] fontEB text-white text-stroke mb-6 leading-tight hover:text-[#1f65ff] transition-colors duration-300">
               GROWL TO WORLD!
             </p>
             <p className="text-[10px] sm:text-base fontLight mb-16 ml-1">

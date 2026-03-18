@@ -11,58 +11,58 @@ const IntroPart2 = () => {
 
   const baseCards = isAdmin
     ? [
-        {
-          id: "01",
-          title: "신규 과제",
-          subtitle: "등록하기",
-          icon: images.introimg1,
-          color: "#407cfe",
-        },
-        {
-          id: "02",
-          title: "아기사자 과제",
-          subtitle: "채점하기",
-          icon: images.introimg1,
-          color: "#407cfe",
-        },
-        {
-          id: "03",
-          title: "수업자료",
-          subtitle: "관리하기",
-          icon: images.introimg2,
-          color: "#264c9f",
-        },
-        {
-          id: "04",
-          title: "복습 문제",
-          subtitle: "관리하기",
-          icon: images.introimg3,
-          color: "#4b76d2",
-        },
-      ]
+      {
+        id: "01",
+        title: "신규 과제",
+        subtitle: "등록하기",
+        icon: images.introimg1,
+        color: "#407cfe",
+      },
+      {
+        id: "02",
+        title: "아기사자 과제",
+        subtitle: "채점하기",
+        icon: images.introimg1,
+        color: "#407cfe",
+      },
+      {
+        id: "03",
+        title: "수업자료",
+        subtitle: "관리하기",
+        icon: images.introimg2,
+        color: "#264c9f",
+      },
+      {
+        id: "04",
+        title: "복습 문제",
+        subtitle: "관리하기",
+        icon: images.introimg3,
+        color: "#4b76d2",
+      },
+    ]
     : [
-        {
-          id: "01",
-          title: "과제",
-          subtitle: "확인하기",
-          icon: images.introimg1,
-          color: "#407cfe",
-        },
-        {
-          id: "02",
-          title: "자료실",
-          subtitle: "바로가기",
-          icon: images.introimg2,
-          color: "#264c9f",
-        },
-        {
-          id: "03",
-          title: "배운 내용",
-          subtitle: "복습하기",
-          icon: images.introimg3,
-          color: "#4b76d2",
-        },
-      ];
+      {
+        id: "01",
+        title: "과제",
+        subtitle: "확인하기",
+        icon: images.introimg1,
+        color: "#407cfe",
+      },
+      {
+        id: "02",
+        title: "자료실",
+        subtitle: "바로가기",
+        icon: images.introimg2,
+        color: "#264c9f",
+      },
+      {
+        id: "03",
+        title: "배운 내용",
+        subtitle: "복습하기",
+        icon: images.introimg3,
+        color: "#4b76d2",
+      },
+    ];
 
   const trackInfo = {
     백엔드: {
@@ -83,8 +83,8 @@ const IntroPart2 = () => {
         : ["#EB6918", "#E77731", "#F88A46"],
       urlName: "FRONTEND",
     },
-    디자인: {
-      name: "Design",
+    기획·디자인: {
+      name: "PM/DESIGN",
       buttonColor: "#FC6163",
       backgroundImage: images.DesignBg,
       cardColors: isAdmin
@@ -223,18 +223,17 @@ const IntroPart2 = () => {
               onMouseEnter={() => setHoveredTrack(track)}
               onMouseLeave={() => setHoveredTrack(null)}
               className={`cursor-pointer text-[10px] md:text-sm px-4 md:px-6 py-[5px] rounded-3xl transition-colors duration-300 ease-in-out
-                ${
-                  selectedTrack === track || hoveredTrack === track
-                    ? `text-white`
-                    : "text-[#c4c4c4]"
+                ${selectedTrack === track || hoveredTrack === track
+                  ? `text-white`
+                  : "text-[#c4c4c4]"
                 }`}
               style={{
                 backgroundColor:
                   selectedTrack === track
                     ? trackInfo[track].buttonColor
                     : hoveredTrack === track
-                    ? trackInfo[track].buttonColor
-                    : "#ffffff",
+                      ? trackInfo[track].buttonColor
+                      : "#ffffff",
               }}
               variants={itemVariants}
             >
@@ -246,9 +245,8 @@ const IntroPart2 = () => {
         {/* 트랙 미선택 안내 문구 */}
         <div className="h-[20px] md:h-[24px]">
           <p
-            className={`text-xs md:text-sm ${
-              currentTrack ? "invisible" : "visible"
-            }`}
+            className={`text-xs md:text-sm ${currentTrack ? "invisible" : "visible"
+              }`}
           >
             <span className="text-[#1f65ff]">트랙 선택 후</span> 서비스 이용이
             가능합니다.
@@ -258,11 +256,10 @@ const IntroPart2 = () => {
         {/* 카드 목록 */}
         <motion.div
           variants={containerVariants}
-          className={`${
-            isAdmin
-              ? "grid grid-cols-2 gap-3 sm:flex sm:gap-8 md:gap-20"
-              : "flex gap-4 sm:gap-8 md:gap-20"
-          }`}
+          className={`${isAdmin
+            ? "grid grid-cols-2 gap-3 sm:flex sm:gap-8 md:gap-20"
+            : "flex gap-4 sm:gap-8 md:gap-20"
+            }`}
         >
           {baseCards.map((c, idx) => (
             <motion.div key={c.id} variants={itemVariants}>

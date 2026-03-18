@@ -10,7 +10,7 @@ export default function TrackTitle({ suffix = "", showOnlyTrack = false }) {
   const trackTypeMap = {
     FRONTEND: "FRONT-END",
     BACKEND: "BACK-END",
-    DESIGN: "DESIGN",
+    DESIGN: "PM/DESIGN",
   };
 
   const displayTrack = trackTypeMap[trackType] || trackType || "";

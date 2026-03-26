@@ -200,6 +200,18 @@ export default function AssignmentSubmit({ assignment }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const isContentEmpty = !content || content.trim() === "";
+    const remainingFilesCount = isSubmitted && isEditMode 
+      ? submittedFiles.length - deletedFiles.length
+      : 0;
+    const hasAnyFiles = files.length > 0 || remainingFilesCount > 0;
+
+    if (isContentEmpty && !hasAnyFiles) {
+      alert("내용을 입력하거나 파일을 하나 이상 첨부해주세요.");
+      return;
+    }
+
     setIsUploading(true);
 
     try {

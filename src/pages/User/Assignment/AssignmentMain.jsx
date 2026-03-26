@@ -39,6 +39,8 @@ export default function AssignmentMain() {
         console.error("과제 데이터를 불러오는 데 실패했습니다:", error);
         if (error.response?.status === 404) {
           alert("해당 트랙의 과제가 없습니다.");
+        } else {
+          alert("서버 오류가 발생하여 과제를 불러올 수 없습니다. 관리자에게 문의해주세요.");
         }
       }
     };
@@ -47,7 +49,7 @@ export default function AssignmentMain() {
   }, [track]);
 
   const filteredAssignments = assignments.filter((a) =>
-    a.title.toLowerCase().includes(searchTerm.toLowerCase())
+    (a.title || "").toLowerCase().includes((searchTerm || "").toLowerCase())
   );
 
   const totalPosts = filteredAssignments.length;
